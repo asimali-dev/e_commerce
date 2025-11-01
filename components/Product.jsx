@@ -6,10 +6,10 @@ export default function Product(props) {
   const [data, setdata] = useState([])
   const categories = ["All", "Mens", "Womens", "Kids", "Sale", "New Arrivals"]
   const product_list = async () => {
-    const url = "http://localhost:5000/product";
+    const url = "https://asimali-dev.github.io/api-repo/product-list.json";
     const resp = await fetch(url)
     const data = await resp.json();
-    setdata(data);
+    setdata(data.product);
     console.log(data);
   }
   useEffect(() => {
