@@ -8,7 +8,7 @@ import Wishlist from '../components/Wishlist'
 import Order_summery from '../components/Order_summery'
 import Order_placed from '../components/Order_placed'
 import Footer from '../components/Footer'
-import product from '../src/index'
+
 
 function App() {
   const [count, setCount] = useState(0)
