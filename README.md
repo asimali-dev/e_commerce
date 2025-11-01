@@ -26,4 +26,4 @@ The website is designed to provide a smooth and responsive shopping experience.
 
 1. Clone the repository
 ```bash
-git clone https://github.com/<username>/<repo>.git
+git clone https://github.com/<asimali-dev>/<repo>.git
