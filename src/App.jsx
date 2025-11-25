@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from '../components/Navbar'
 import Banner from '../components/Banner'
 import Product from '../components/Product'
@@ -8,6 +8,8 @@ import Wishlist from '../components/Wishlist'
 import Order_summery from '../components/Order_summery'
 import Order_placed from '../components/Order_placed'
 import Footer from '../components/Footer'
+import AdminLogin from "../components/AdminLogin";
+import Dashboard from "../components/Dashboard";
 
 
 function App() {
@@ -109,24 +111,27 @@ function App() {
 
 
   return (
-    <BrowserRouter>
-      <Navbar scrolling={HandleScroll} setsearch={setsearch} managePanel={managePanel} total = {addtotal} wish = {wish}/>
-      <Banner />
-      <Product search={search} addTocart={addTocart} addTowish={addTowish} wish = {wish}/>
-      <Cart panel={panel} closepanel={closingpanel} product={product} removeProduct={removeProduct} addQuantity={addQuantity} subQuantity={subQuantity} subtotal = {addSubTotal} shipping = {shippingfee} ordertotal = {ordertotal}
-      summery = {setsummery}/>
-      <Wishlist panel={panel} closepanel={closingpanel} wish={wish} addTocart={addTocart} setwish = {setWish} removing = {removing}/>
-      {
-      summery &&
-      <Order_summery product = {product} ordertotal = {ordertotal} shipping = {shippingfee} subtotal = {addSubTotal} Orderplaced = {setOrderPlaced}
-      setsummery={setsummery} setproduct = {setproduct}/>
-      } 
-      {
-        OrderPlaced && 
-        <Order_placed orderplaced={setOrderPlaced}/>
-      }
-      <Footer/>
+     <BrowserRouter>
+      <Routes>
 
+        {/* Customer frontend */}
+        <Route path="/" element={
+          <>
+            <Navbar scrolling={HandleScroll} setsearch={setsearch} managePanel={managePanel} total={addtotal} wish={wish}/>
+            <Banner />
+            <Product search={search} addTocart={addTocart} addTowish={addTowish} wish={wish}/>
+            <Cart panel={panel} closepanel={closingpanel} product={product} removeProduct={removeProduct} addQuantity={addQuantity} subQuantity={subQuantity} subtotal={addSubTotal} shipping={shippingfee} ordertotal={ordertotal} summery={setsummery}/>
+            <Wishlist panel={panel} closepanel={closingpanel} wish={wish} addTocart={addTocart} setwish={setWish} removing={removing}/>
+            {summery && <Order_summery product={product} ordertotal={ordertotal} shipping={shippingfee} subtotal={addSubTotal} Orderplaced={setOrderPlaced} setsummery={setsummery} setproduct={setproduct}/>}
+            {OrderPlaced && <Order_placed orderplaced={setOrderPlaced}/>}
+            <Footer/>
+          </>
+        } />
+
+        {/* Admin dashboard route */}
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+
+      </Routes>
     </BrowserRouter>
   )
 }
