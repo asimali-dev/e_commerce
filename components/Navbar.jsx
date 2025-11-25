@@ -8,7 +8,7 @@ export default function Navbar(props) {
   const navigate = useNavigate(); 
 
   const goToAdmin = () => {
-    navigate('/admin/dashboard');
+    navigate('/admin/Dashboard');
   }
 
   return (
