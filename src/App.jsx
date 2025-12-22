@@ -9,10 +9,9 @@ import Order_summery from '../components/Order_summery';
 import Order_placed from '../components/Order_placed';
 import Footer from '../components/Footer';
 import Dashboard from "../components/Dashboard";
+import AdminLogin from "../components/Admin_login";
 
 function App() {
-  const isProd = import.meta.env.PROD;
-
   const [search, setSearch] = useState('');
   const [panel, setPanel] = useState('null');
   const [product, setProduct] = useState(() => {
@@ -94,7 +93,7 @@ function App() {
   };
 
   return (
-    <HashRouter basename={isProd ? '/e_commerce' : '/'}>
+    <HashRouter>
       <Routes>
         <Route path="/" element={
           <>
@@ -135,6 +134,7 @@ function App() {
           </>
         } />
         <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
       </Routes>
     </HashRouter>
   );
