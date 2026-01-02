@@ -1,38 +1,47 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { FaHeart } from "react-icons/fa";
 
 export default function Product(props) {
   const [active, setActive] = useState('All');
-  const [data, setdata] = useState([])
-  const categories = ["All", "Mens", "Womens", "Kids", "Sale", "New Arrivals"]
+  const [data, setdata] = useState([]);
+  const categories = ["All", "Mens", "Womens", "Kids", "Sale", "New Arrivals"];
+
   const product_list = async () => {
-    const url = "https://asimali-dev.github.io/api-repo/product-list.json";
-    const resp = await fetch(url)
-    const data = await resp.json();
-    setdata(data.product);
-    console.log(data);
+    try {
+      const url = "https://asimali-dev.github.io/api-repo/product-list.json";
+      const resp = await fetch(url);
+      const remoteData = await resp.json();
+      const localData = JSON.parse(localStorage.getItem('cartProducts')) || [];
+      setdata([...remoteData.product, ...localData]);
+    } catch (err) {
+      console.error(err);
+    }
   }
+
   useEffect(() => {
-    product_list()
-  }, [])
+    product_list();
+  }, []);
 
-  const fillterItem = data.filter(item =>{
-   const matches = 
-   (active === 'All') ||
-   (active === 'New Arrivals' && item.new_arrival)||
-   (active === 'Sale' && item.sale)||
-   (active === item.category)
-   ? data : active === item.category;
+  const fillterItem = data.filter(item => {
+    const matchesCategory = 
+      active === 'All' ||
+      (active === 'New Arrivals' && item.new_arrival) ||
+      (active === 'Sale' && item.sale) ||
+      (active === item.category);
+    const matchesSearch = item.name.toLowerCase().includes(props.search.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-   const searchcategory = item.name.toLowerCase().includes(props.search.toLowerCase())
-   return matches && searchcategory;
-  })
-  const none_font = ()=>{
-    return(
+  const none_font = () => {
+    return (
       <div className='w-[55%] h-[20vh]'>
-        <img className='object-cover object-center mix-blend-darken' src="https://static.tildacdn.net/tild3432-3335-4337-b130-363866343062/No_results_1.svg" alt="" />
+        <img
+          className='object-cover object-center mix-blend-darken'
+          src="https://static.tildacdn.net/tild3432-3335-4337-b130-363866343062/No_results_1.svg"
+          alt=""
+        />
       </div>
-    )
+    );
   }
 
   const add_product = () => {
@@ -55,43 +64,28 @@ export default function Product(props) {
         </div>
         <h3 className='md:text-[20px] text-[16px] mt-2 font-medium md:font-serif text-red-600 truncate'>{item.name}</h3>
         <div className='flex md:w-[60%] w-[90%] justify-between'>
-          {
-            item.sale && (
-              <p className='md:text-[18px] text-[16px] mt-1 line-through'>${item.old_price.toFixed(2)}</p>
-            )
-          }
-          <p className='md:text-[18px] text-[16px] mt-1 '>${item.price.toFixed(2)}</p>
+          {item.sale && (
+            <p className='md:text-[18px] text-[16px] mt-1 line-through'>${item.old_price.toFixed(2)}</p>
+          )}
+          <p className='md:text-[18px] text-[16px] mt-1'>${item.price.toFixed(2)}</p>
         </div>
-        <button className='w-full h-[40px] bg-blue-600 rounded-[10px] mt-3 text-white text-[16px] md:text-[18px] font-medium cursor-pointer hover:bg-red-500'
-        onClick={()=>props.addTocart(item)}>Add to Cart</button>
+        <button className='w-full h-[40px] bg-blue-600 rounded-[10px] mt-3 text-white text-[16px] md:text-[18px] font-medium cursor-pointer hover:bg-red-500' onClick={()=>props.addTocart(item)}>Add to Cart</button>
       </div>
-
-    ))
+    ));
   }
+
   return (
     <>
       <div className='w-full h-auto pb-9' id='product-section'>
         <div className='md:w-[60%] w-[90%] h-auto md:h-auto mt-7 flex md:justify-evenly justify-center gap-3.5 flex-wrap m-auto'>
-          {
-            categories.map((item, index) => {
-              return (
-                <button key={index} className={`rounded-lg md:px-5 md:py-1.5 px-3 h-[40px] text-[16px] md:text-[18px] font-medium
-                cursor-pointer  ${active === item ? "bg-blue-600 text-white" : "bg-zinc-100 text-black"}`}
-                  onClick={() => setActive(item)}>{item}</button>
-              )
-            })
-          }
+          {categories.map((item, index) => (
+            <button key={index} className={`rounded-lg md:px-5 md:py-1.5 px-3 h-[40px] text-[16px] md:text-[18px] font-medium cursor-pointer ${active === item ? "bg-blue-600 text-white" : "bg-zinc-100 text-black"}`} onClick={() => setActive(item)}>{item}</button>
+          ))}
         </div>
         <div className='pl-1.5 pr-1.5'>
-          {
-            (fillterItem.length === 0) ? 
-            <div className='flex justify-center'>{none_font()}</div> : 
-            <div className='md:w-[100%] w-[100%] grid md:grid-cols-4 grid-cols-2 mt-9 md:gap-6 gap-3 justify-items-center md:pl-5 md:pr-5 md:pb-7 gap-y-9'>{ add_product()}</div>
-
-          }
+          {fillterItem.length === 0 ? <div className='flex justify-center'>{none_font()}</div> : <div className='md:w-[100%] w-[100%] grid md:grid-cols-4 grid-cols-2 mt-9 md:gap-6 gap-3 justify-items-center md:pl-5 md:pr-5 md:pb-7 gap-y-9'>{add_product()}</div>}
         </div>
-
       </div>
     </>
-  )
+  );
 }

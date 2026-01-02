@@ -1,32 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './Slider';
-import OrdersManagement from './OrdersManagement';
 import ProductsManagement from './ProductsManagement';
+import OrdersManagement from './OrdersManagement';
 import Categories from './categories';
+import axios from 'axios';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Dashboard');
-
   const [products, setProducts] = useState(() => {
     const store = localStorage.getItem('cartProducts');
     return store ? JSON.parse(store) : [];
   });
-  const [orders, setOrders] = useState(() => {
-    const store = localStorage.getItem('orders');
-    return store ? JSON.parse(store) : [];
-  });
+  const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState(() => {
     const store = localStorage.getItem('customers');
     return store ? JSON.parse(store) : [];
   });
-
   const [categories, setCategories] = useState(() => {
     const store = localStorage.getItem('categories');
     return store ? JSON.parse(store) : [];
   });
 
-  const totalSales = orders.reduce((acc, o) => acc + o.total, 0);
-  const totalOrders = orders.length;
+  const API_BASE = 'http://localhost:8080/Ecommerce_backend';
+
+  // Fetch orders from backend
+  const fetchOrders = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/get_orders.php`);
+      setOrders(res.data);
+    } catch (err) {
+      console.error('Failed to fetch orders', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const totalSales = orders.reduce((acc, o) => acc + o.price * o.quantity, 0);
+  const totalOrders = [...new Set(orders.map(o => o.user_email + o.created_at))].length; // unique orders
   const totalProducts = products.length;
   const totalCustomers = customers.length;
   const totalCategories = categories.length;
@@ -49,7 +61,7 @@ export default function Dashboard() {
         )}
 
         <div className="bg-white rounded shadow p-4">
-          {activeTab === 'Orders' && <OrdersManagement orders={orders} setOrders={setOrders} />}
+          {activeTab === 'Orders' && <OrdersManagement orders={orders} />}
           {activeTab === 'Products' && <ProductsManagement products={products} setProducts={setProducts} />}
           {activeTab === 'Categories' && <Categories />}
         </div>
